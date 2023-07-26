@@ -119,8 +119,8 @@ int main(void)
   MX_FDCAN1_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-  printf("\n\n#########################################\n");
-  printf("STM32G431 CAN FD Test skpang.co.uk 12/20\n\n");
+  printf("\r\n\r\n#########################################\r\n");
+  printf("STM32G431 CAN FD Test skpang.co.uk 12/20\r\n\r\n");
 
   skp_can_init();
   FDCAN_Config();
@@ -155,12 +155,12 @@ int main(void)
     	  tick = systick;
           if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
     	         {
-    	        	  printf("Tx error\n");
+    	        	  printf("Tx error\r\n");
     		           Error_Handler();
    		         }
      	   TxData[1] = i>>8;
     	   TxData[0] = i++;
-
+    	   tick = systick;
       }
   }
   /* USER CODE END 3 */

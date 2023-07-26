@@ -40,14 +40,14 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 		{
 			dlc = DLCtoBytes[RxHeader.DataLength >> 16];
 
-			printf("Len:%x ID:%x Data:",dlc,RxHeader.Identifier);
+			printf("Len:%x ID:%lx Data:",dlc,RxHeader.Identifier);
 
 			for(i=0;i< dlc;i++)
 			{
 				printf("%x ",RxData[i]);
 			}
 
-			printf(" \n");
+			printf(" \r\n");
 
 		}
 	}
@@ -66,36 +66,43 @@ void skp_can_init(void)
 	  hfdcan1.Init.ProtocolException = DISABLE;
 
       // These values are based on a 80MHz clock to the CAN module
-
-	  /*
+#if 1
+	  printf("Nominal 1000kbps\r\n");
 	  hfdcan1.Init.NominalPrescaler = 1;			//1000kbps
 	  hfdcan1.Init.NominalSyncJumpWidth = 1;
 	  hfdcan1.Init.NominalTimeSeg1 = 63;
 	  hfdcan1.Init.NominalTimeSeg2 = 16;
-       */
-
+#elif 0
+      printf("Nominal 500kbps\r\n");
 	  hfdcan1.Init.NominalPrescaler = 1;			//500kbps
 	  hfdcan1.Init.NominalSyncJumpWidth = 16;
 	  hfdcan1.Init.NominalTimeSeg1 = 119;
 	  hfdcan1.Init.NominalTimeSeg2 = 40;
+#else
+#error "No nominal bit rate."
+#endif
 
-	  /*
-
+#if 0
+      printf("Data 8000kbps\r\n");
 	  hfdcan1.Init.DataPrescaler = 1;
 	  hfdcan1.Init.DataSyncJumpWidth = 1;
 	  hfdcan1.Init.DataTimeSeg1 = 7;				//8000kbps
 	  hfdcan1.Init.DataTimeSeg2 = 2;
-
+#elif 0
+	  printf("Data 4000kbps\r\n");
 	  hfdcan1.Init.DataPrescaler = 2;
 	  hfdcan1.Init.DataSyncJumpWidth = 1;
 	  hfdcan1.Init.DataTimeSeg1 = 7;				//4000kbps
 	  hfdcan1.Init.DataTimeSeg2 = 2;
-*/
-
+#elif 1
+	  printf("Data 2000kbps\r\n");
 	  hfdcan1.Init.DataPrescaler = 1;
 	  hfdcan1.Init.DataSyncJumpWidth = 1;
 	  hfdcan1.Init.DataTimeSeg1 = 30;				//2000kbps
 	  hfdcan1.Init.DataTimeSeg2 = 9;
+#else
+#error "No data bit rate."
+#endif
 
 	  hfdcan1.Init.StdFiltersNbr = 1;
 	  hfdcan1.Init.ExtFiltersNbr = 0;
@@ -105,7 +112,7 @@ void skp_can_init(void)
 	  if (HAL_FDCAN_Init(&hfdcan1) != HAL_OK)
 	  {
 
-		printf("##########  HAL_FDCAN_Init ERROR 1 ##########\n");
+		printf("##########  HAL_FDCAN_Init ERROR 1 ##########\r\n");
 	    Error_Handler();
 	  }
 }
@@ -130,7 +137,7 @@ void FDCAN_Config(void)
   if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK)
 
   {
-    printf("##########  HAL_FDCAN_ConfigFilter ERROR 2 ##########\n");
+    printf("##########  HAL_FDCAN_ConfigFilter ERROR 2 ##########\r\n");
     Error_Handler();
   }
 
@@ -140,20 +147,20 @@ void FDCAN_Config(void)
   //if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) != HAL_OK)
   if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) != HAL_OK)
   {
-	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 3 ##########\n");
+	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 3 ##########\r\n");
     Error_Handler();
   }
 
 // 6,2 working for a bit
   if (HAL_FDCAN_ConfigTxDelayCompensation(&hfdcan1, 6, 2) != HAL_OK)
   {
-	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 6 ##########\n");
+	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 6 ##########\r\n");
     Error_Handler();
   }
 
   if (HAL_FDCAN_EnableTxDelayCompensation(&hfdcan1) != HAL_OK)
   {
-	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 7 ##########\n");
+	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 7 ##########\r\n");
     Error_Handler();
   }
 
@@ -161,13 +168,13 @@ void FDCAN_Config(void)
   /* Start the FDCAN module */
   if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK)
   {
-	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 4 ##########\n");
+	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 4 ##########\r\n");
     Error_Handler();
   }
 
   if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
   {
-	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 5 ##########\n");
+	  printf("##########  HAL_FDCAN_ConfigFilter ERROR 5 ##########\r\n");
     Error_Handler();
   }
 
