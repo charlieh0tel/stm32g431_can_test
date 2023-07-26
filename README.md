@@ -1,2 +1,2 @@
-# stm32g431_nucleo_test
+# stm32g431_can_test
  
